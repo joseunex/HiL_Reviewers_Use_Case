@@ -1,0 +1,7 @@
+Gestores/GestorDeConexiones.class
+Gestores/Publisher.class
+Gestores/Receiver.class
+Gestores/Main.class
+Gestores/Topic.class
+Gestores/Broker.class
+Gestores/Main$SensorThread.class

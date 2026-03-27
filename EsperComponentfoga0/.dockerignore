@@ -1,0 +1,7 @@
+.git
+.idea
+*.iml
+target/*
+!target/*-jar-with-dependencies.jar
+src/test
+*.log

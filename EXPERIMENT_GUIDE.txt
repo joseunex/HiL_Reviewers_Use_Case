@@ -1,0 +1,237 @@
+================================================================================
+  EXPERIMENT EXECUTION GUIDE
+  Use Case 2: Closed-Loop Batch Reactor Temperature Control
+================================================================================
+
+NOTE
+------------------------------
+The MQTT topic names used in the model were defined before the paper was
+written and do not match the naming conventions described in the manuscript.
+Please consider the following mapping:
+
+  Topic   Paper description
+  -----   -----------------------------------------------------------------
+  Z       Temperature readings from the closed-loop batch reactor sensor
+  C       Temperature readings from background sensors
+  B       Cooling command for the actuator (issued by the CEP)
+  D       Cooling command related to temperature data from background sensors (issued by the CEP)
+
+All commands run from:  DeployV2/k8s/
+Build scripts are in:   DeployV2/Testing/Packaging/
+
+These experiments are made to run WITHOUT physical HiL devices. 
+All components, including the actuator and the closed-loop
+thermal sensor, execute as containers within the Kubernetes cluster. 
+Nevertheless, the results are representative of the framework's timing 
+and scalability behavior.
+
+The fault-injection experiment (CEP crash, Section VIII-F-5 in the paper)
+is not covered in this guide. It can be reproduced manually by deleting
+the CEP pod during a running experiment:
+  # Scale CEP to 0 replicas (simulate crash)
+	kubectl -n simulateiot scale deploy fogfoga0-cep-esper --replicas=0
+	
+	# Wait ~60s (outage duration)
+	sleep 60
+	
+	# Restore CEP
+	kubectl -n simulateiot scale deploy fogfoga0-cep-esper --replicas=1
+
+================================================================================
+  PREREQUISITES
+================================================================================
+
+Software:
+  - Kubernetes cluster running (tested with K3s v1.34.3+k3s1)
+  - Docker installed on the host
+  - Maven (mvn) installed (for compiling Java components)
+  - metrics-server installed (kubectl top pods must work)
+  - Python 3 with: pip install pandas matplotlib numpy
+
+Node labeling:
+  All manifests use a nodeSelector requiring the label
+  simulateiot.io/role=host. Apply it to the node(s) that will run the
+  experiment pods:
+
+    kubectl label node <YOUR_NODE_NAME> simulateiot.io/role=host
+
+  If running on a single-node cluster with a control-plane role, the
+  manifests already include the necessary tolerations.
+
+================================================================================
+  STEP 0: SET UP A LOCAL DOCKER REGISTRY
+================================================================================
+
+The build scripts push images to a local insecure registry on port 5000.
+The registry IP is auto-detected from the host's network interface.
+
+  0.1  Start the registry:
+
+    docker run -d -p 5000:5000 --restart=always --name registry registry:2
+
+  0.2  Configure Docker to accept HTTP (insecure) pushes.
+       Edit /etc/docker/daemon.json:
+
+    {
+      "insecure-registries": ["<YOUR_HOST_IP>:5000"]
+    }
+
+       Then restart Docker:  sudo systemctl restart docker
+
+  0.3  If using K3s, configure containerd to pull from the insecure
+       registry. Create/edit /etc/rancher/k3s/registries.yaml:
+
+    mirrors:
+      "<YOUR_HOST_IP>:5000":
+        endpoint:
+          - "http://<YOUR_HOST_IP>:5000"
+
+       Then restart K3s:  sudo systemctl restart k3s
+
+  0.4  Update the image references in the Kubernetes manifests.
+       All manifests reference a hardcoded IP (192.168.0.17:5000).
+       Replace it with your host IP:
+
+    cd DeployV2/k8s/
+    sed -i 's|192.168.0.17:5000|<YOUR_HOST_IP>:5000|g' *.yaml
+
+================================================================================
+  STEP 1: COMPILE, BUILD, AND PUSH
+================================================================================
+
+These three scripts are in DeployV2/Testing/Packaging/ and must be run
+sequentially before the first experiment at each node-count configuration.
+
+  1.1  Compile Java packages (Maven):
+
+    python3 Testing/Packaging/phase1-compile-packages.py
+
+       Compiles: sensthread1, acta0, foga0, EsperComponentfoga0,
+       ClosedLoopSensor.
+
+  1.2  Build Docker images:
+
+    python3 Testing/Packaging/phase2-docker-build.py
+
+       Builds and tags images for the local registry.
+
+  1.3  Push images to registry:
+
+    python3 Testing/Packaging/phase3-docker-push.py
+
+NOTE: The phase2 and phase3 scripts auto-detect the host IP for the
+registry address. Ensure it matches the IP used in step 0.
+
+================================================================================
+  STEP 2: CONFIGURE THE NODE COUNT
+================================================================================
+
+The number of background sensor nodes is controlled by the SENSOR_QUANTITY
+environment variable in the sensthread1 manifest:
+
+    DeployV2/k8s/fogfoga0-sensor-sensthread1.manifest.yaml
+
+To change the number of total sensor nodes in the experiment, edit the
+SENSOR_QUANTITY value in that manifest. The ClosedLoopSensor (the primary
+reactor loop sensor) is a separate deployment and always runs as 1 replica.
+
+    Experiment    SENSOR_QUANTITY    Total sensors (incl. ClosedLoopSensor)
+    ----------    ---------------   --------------------------------------
+    5 nodes       4                  5  (4 background + 1 closed-loop)
+    50 nodes      49                 50 (49 background + 1 closed-loop)
+    100 nodes     99                 100 (99 background + 1 closed-loop)
+
+After editing the manifest, no rebuild is needed.
+
+================================================================================
+  STEP 3: RUN EXPERIMENTS
+================================================================================
+
+From DeployV2/k8s/:
+
+  python3 run_experiment.py --name <experiment_name> --duration 300
+
+What it does (automatically):
+  1. Deploys all components (apply-all.sh)
+  2. Collects kubectl top pods every 2s -> kubectl_top.csv
+  3. Waits for the configured duration
+  4. Exports MongoDB collections to JSON
+  5. Collects pod logs
+  6. Resets everything (reset-all.sh)
+
+Output goes to:  experiments/<experiment_name>/raw/
+
+================================================================================
+  STEP 4: ANALYZE EACH EXPERIMENT
+================================================================================
+
+  python3 analyze_experiment.py --exp-dir experiments/<experiment_name>
+
+Optional: change warmup period (default 30s):
+
+  python3 analyze_experiment.py --exp-dir experiments/<experiment_name> --warmup 30
+
+What it generates in experiments/<name>/results/:
+  - fig_latency_boxplot.png/pdf
+  - fig_rtt_cdf.png/pdf
+  - fig_jitter_histogram.png/pdf
+  - fig_rtt_timeline.png/pdf
+  - fig_temperature_trajectory.png/pdf
+  - fig_overshoot_vs_latency.png/pdf
+  - fig_cep_drops.png/pdf
+  - fig_resources.png/pdf
+  - latency_summary.csv + .tex
+  - fidelity_summary.csv + .tex
+  - cep_drops_summary.json
+
+================================================================================
+  FULL SEQUENCE (copy-paste)
+================================================================================
+
+# --- One-time setup ---
+kubectl label node <YOUR_NODE_NAME> simulateiot.io/role=host
+cd DeployV2/k8s/
+sed -i 's|192.168.0.17:5000|<YOUR_HOST_IP>:5000|g' *.yaml
+
+# --- Experiment 1: 5 nodes ---
+# Edit sensthread1 manifest: set SENSOR_QUANTITY to "4"
+python3 ../Testing/Packaging/phase1-compile-packages.py
+python3 ../Testing/Packaging/phase2-docker-build.py
+python3 ../Testing/Packaging/phase3-docker-push.py
+python3 run_experiment.py --name exp1_5nodes --duration 300
+python3 analyze_experiment.py --exp-dir experiments/exp1_5nodes
+
+# --- Experiment 2: 50 nodes ---
+# Edit sensthread1 manifest: set SENSOR_QUANTITY to "49"
+python3 run_experiment.py --name exp2_50nodes --duration 300
+python3 analyze_experiment.py --exp-dir experiments/exp2_50nodes
+
+# --- Experiment 3: 100 nodes ---
+# Edit sensthread1 manifest: set SENSOR_QUANTITY to "99"
+python3 run_experiment.py --name exp3_100nodes --duration 300
+python3 analyze_experiment.py --exp-dir experiments/exp3_100nodes
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+"kubectl top pods" fails:
+  Install metrics-server or patch it for self-signed certs:
+    kubectl -n kube-system patch deployment metrics-server \
+      --type='json' \
+      -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-",
+            "value":"--kubelet-insecure-tls"}]'
+
+0 ACK records after analysis:
+  Try --warmup 0 to check if warmup is discarding all data
+
+Docker push fails with "http: server gave HTTP response to HTTPS client":
+  The registry is not configured as insecure. Revisit Step 0.2 and 0.3.
+
+Pods stuck in ImagePullBackOff:
+  K3s cannot reach the registry over HTTP. Revisit Step 0.3 and restart K3s.
+
+Pods stuck in Pending (no nodes available):
+  The node label is missing. Apply it: kubectl label node <name> simulateiot.io/role=host
+
+================================================================================

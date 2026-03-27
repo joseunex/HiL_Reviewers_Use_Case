@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fogfoga0-mosquitto-config
+  namespace: simulateiot
+data:
+  mosquitto.conf: |
+    persistence false
+    log_type all
+    listener 1883
+    allow_anonymous true
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fogfoga0-mosquitto
+  namespace: simulateiot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+      fog: foga0
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+        fog: foga0
+    spec:
+      nodeSelector:
+        simulateiot.io/role: host
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: mosquitto
+          image: joseinformatica96/simulateiot:eclipse-mosquitto
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1883
+              name: mqtt
+          volumeMounts:
+            - name: mosquitto-config
+              mountPath: /mosquitto/config/mosquitto.conf
+              subPath: mosquitto.conf
+      volumes:
+        - name: mosquitto-config
+          configMap:
+            name: fogfoga0-mosquitto-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto-foga0
+  namespace: simulateiot
+spec:
+  type: ClusterIP
+  selector:
+    app: mosquitto
+    fog: foga0
+  ports:
+    - name: mqtt
+      port: 1883
+      targetPort: 1883

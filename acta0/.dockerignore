@@ -1,0 +1,7 @@
+.git
+.idea
+*.iml
+target/*
+!target/*-thorntail.jar
+src/test
+*.log

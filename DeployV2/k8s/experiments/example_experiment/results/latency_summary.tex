@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\caption{Latency decomposition (ms)}
+\label{tab:latency}
+\begin{tabular}{lllllllll}
+\hline
+Segment & Count & Min & Median & Mean & P95 & P99 & Max & Std \\
+\hline
+L_src→ing & 91 & 0.0 & 1.0 & 1.4 & 2.0 & 3.0 & 3.0 & 0.62 \\
+L_CEP & 91 & 52.0 & 54.0 & 53.6 & 54.0 & 55.0 & 55.0 & 0.63 \\
+L_src→dec & 91 & 54.0 & 55.0 & 55.0 & 55.0 & 55.0 & 55.0 & 0.18 \\
+L_dec→eff & 91 & 0.0 & 1.0 & 1.3 & 3.0 & 3.0 & 3.0 & 0.63 \\
+L_act & 91 & 0.0 & 0.0 & 0.1 & 1.0 & 1.0 & 1.0 & 0.30 \\
+RTT_ctrl & 91 & 1.0 & 2.0 & 2.6 & 5.0 & 6.0 & 6.0 & 1.11 \\
+L_e2e & 91 & 56.0 & 57.0 & 57.6 & 60.0 & 61.0 & 61.0 & 1.12 \\
+\hline
+\end{tabular}
+\end{table}

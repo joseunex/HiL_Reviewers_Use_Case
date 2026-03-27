@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>Gestores</groupId>
+  <artifactId>sensthread1</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>sensthread1</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <version.thorntail>2.4.0.Final</version.thorntail>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+	<repositories>
+	    <repository>
+	        <id>Eclipse Paho Repo</id>
+	        <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+	    </repository>
+	</repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.eclipse.paho</groupId>
+        <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+  </dependencies>
+  
+    <build>
+      <plugins>
+		  <plugin>
+		    <groupId>io.thorntail</groupId>
+		    <artifactId>thorntail-maven-plugin</artifactId>
+		    <configuration>
+			  <mainClass>Gestores.Main</mainClass>
+			</configuration>
+		    <version>${version.thorntail}</version> 
+		    <executions>
+		      <execution>
+		        <goals>
+		          <goal>package</goal>
+		        </goals>
+		      </execution>
+		    </executions>
+		  </plugin>
+		  <plugin>
+	      	<groupId>com.spotify</groupId>
+	      	<artifactId>docker-maven-plugin</artifactId>
+	      	<version>1.2.0</version>
+	      	<configuration>
+	      	<mainClass>Gestores.Main</mainClass>
+	        <imageName>localhost:5000/sensor-sensthread1</imageName>
+	        <baseImage>openjdk:11.0.11-jre-slim</baseImage>
+	        <entryPoint>["java", "-jar", "/${project.build.finalName}-thorntail.jar"]</entryPoint>
+	        <!-- copy the service's jar file from target into the root directory of the image --> 
+	        <resources>
+	           <resource>
+	             <targetPath>/</targetPath>
+	             <directory>${project.build.directory}</directory>
+	             <include>${project.build.finalName}-thorntail.jar</include>
+	           </resource>
+	        </resources>
+	      </configuration>
+	    </plugin>
+      </plugins>
+  </build>
+</project>
+
+

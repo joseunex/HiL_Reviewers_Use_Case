@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fogfoga0-actuator-acta0
+  namespace: simulateiot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fogfoga0-actuator-acta0
+      simulateiot.io/fog: foga0
+  template:
+    metadata:
+      labels:
+        app: fogfoga0-actuator-acta0
+        simulateiot.io/fog: foga0
+    spec:
+      nodeSelector:
+        simulateiot.io/role: host
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: actuator
+          image: 192.168.0.17:5000/actuator-acta0:latest
+          imagePullPolicy: Always
+          env:
+            - name: MQTT_BROKER_URI
+              value: "tcp://mosquitto-foga0:1883"
+            - name: MQTT_CLIENT_ID_PREFIX
+              value: "acta0"
+            # Keep a single MQTT_TOPIC (avoid duplicates). Not required by current actuator logic.
+            - name: MQTT_TOPIC
+              value: "B"
+
+            # --- Mongo (optional; enabled only if a DB component exists in this fog) ---
+            - name: MONGO_ENABLED
+              value: "true"
+            - name: MONGO_URI
+              value: "mongodb://fogfoga0-mongo:27017"
+            - name: MONGO_DB
+              value: "simulateiot"
+            - name: MONGO_COLLECTION
+              value: "actuator_events"

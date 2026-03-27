@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fogfoga0-cep-esper
+  namespace: simulateiot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fogfoga0-cep-esper
+  template:
+    metadata:
+      labels:
+        app: fogfoga0-cep-esper
+    spec:
+      nodeSelector:
+        simulateiot.io/role: host
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: esper
+          image: 192.168.0.17:5000/esper-foga0:latest
+          imagePullPolicy: Always
+          env:
+            - name: MQTT_BROKER_URI
+              value: tcp://mosquitto-foga0:1883
+            - name: CEP_CLIENT_ID
+              value: foga0_EsperComponent

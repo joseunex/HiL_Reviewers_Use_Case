@@ -1,0 +1,38 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fogfoga0-fog
+  namespace: simulateiot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fogfoga0-fog
+  template:
+    metadata:
+      labels:
+        app: fogfoga0-fog
+    spec:
+      nodeSelector:
+        simulateiot.io/role: host
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: fog
+          image: 192.168.0.17:5000/fog-foga0:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MQTT_BROKER_URI
+              value: "tcp://mosquitto-foga0:1883"
+            - name: MQTT_CLIENT_ID_PREFIX
+              value: "fogfoga0-fog"
+            - name: MQTT_SOCKET_TIMEOUT_SEC
+              value: "5"
+            - name: MONGO_URI
+              value: "mongodb://fogfoga0-mongo:27017"

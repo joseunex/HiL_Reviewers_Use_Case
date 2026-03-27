@@ -1,0 +1,224 @@
+ACTUATOR_BOOT | MQTT_BROKER_URI=tcp://mosquitto-foga0:1883
+ACTUATOR_BOOT | MQTT_CLIENT_ID_PREFIX=acta0
+ACTUATOR_MQTT | automaticReconnect=true (enabled)
+ACTUATOR_MQTT | init | clientId=acta0_8130492 | brokers=1 | cleanSession=true | keepAliveSec=90 | connTimeoutSec=10 | broker0=tcp://mosquitto-foga0:1883
+ACTUATOR_MQTT | connecting... | broker=tcp://mosquitto-foga0:1883 | clientId=acta0_8130492
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.eclipse.paho.client.mqttv3.internal.FileLock (jar:file:/tmp/thorntailorg.eclipse.paho.client.mqttv3-1.2.010832627038824754797.jar!/) to method sun.nio.ch.FileLockImpl.release()
+WARNING: Please consider reporting this to the maintainers of org.eclipse.paho.client.mqttv3.internal.FileLock
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+ACTUATOR_MQTT | connected | broker=tcp://mosquitto-foga0:1883 | clientId=acta0_8130492
+ACTUATOR_MQTT | subscribed | broker=tcp://mosquitto-foga0:1883 | topic=B
+ACTUATOR_RECEIVER | init | actuator_id=acta0_8130492 | ack_topic=actuators/ack | ack_qos=0 | ack_queue_capacity=5000
+ACTUATOR_ACK | publisher thread started
+ACTUATOR_MQTT | callback set | broker=tcp://mosquitto-foga0:1883
+ACTUATOR_BOOT | ready | actuator_id=acta0_8130492 | ack_topic=actuators/ack
+Mar 27, 2026 11:49:25 AM jdk.internal.reflect.NativeMethodAccessorImpl invoke0
+INFO: THORN99999: Thorntail is Ready
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=ON | applied=ON | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
+ACTUATOR | actuator_id=acta0_8130492 | cmd_topic=B | cmd_id=ClosedLoopSensor_9320170 | desired=OFF | applied=OFF | ack_topic=actuators/ack | parsed_ok=true | ack_enqueued=true
+ACTUATOR_ACK | published | actuator_id=acta0_8130492 | broker=tcp://mosquitto-foga0:1883 | queue_size=0
