@@ -1,0 +1,9 @@
+# build outputs
+*/target/
+__pycache__/
+*.pyc
+# addresses of the bench (copy of hil_bench/bench.env.example)
+hil_bench/bench.env
+# outputs of local runs
+DeployV2/k8s/experiments/
+figures/

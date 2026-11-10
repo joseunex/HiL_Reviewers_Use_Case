@@ -1,0 +1,6 @@
+closedloopsensor-d49cd77f7-qpkkx	raspberrypi	192.168.0.17:5000/closedloopsensor@sha256:5fe4c747621f55715aa9a62f25aeeb6b9dab64fcac4eaf6084621cfda4742e20
+fogfoga0-cep-esper-65b6b7646f-2vxwk	jose-vivobook-asuslaptop-x1502za-f1502za	192.168.0.17:5000/esper-foga0@sha256:144af387ab63083c2b5e3bca0cc47b6f5cc8cc78c2cf06c99c6d1f867d9ea4f4
+fogfoga0-fog-749f4f9989-phcgk	jose-vivobook-asuslaptop-x1502za-f1502za	192.168.0.17:5000/fog-foga0@sha256:170e7acf3cdb0ed883b224a48a2c4862a1b0b8ccd12c79040bac1bef8b664eff
+fogfoga0-mongo-56784d8f5c-r5k92	jose-vivobook-asuslaptop-x1502za-f1502za	docker.io/library/mongo@sha256:8b6d8f5bbedb25cb73517b65cf99f13aeb75ad5b157a56c479287a840bbad3ac
+fogfoga0-mosquitto-84b4795f76-gnxfc	jose-vivobook-asuslaptop-x1502za-f1502za	docker.io/joseinformatica96/simulateiot@sha256:8cc1d327bb7f058cb8c83a3751731e8d537868d169dd891f2a626c87cf739667
+fogfoga0-sensor-sensthread1-5c4c64c758-v4wxr	jose-vivobook-asuslaptop-x1502za-f1502za	192.168.0.17:5000/sensor-sensthread1@sha256:c39aecdab48eaa4d99f08613cd0d3845a7d35b666aecc40849f354f70713bf17

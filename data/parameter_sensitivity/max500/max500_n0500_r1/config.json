@@ -1,0 +1,15 @@
+{
+  "experiment_name": "max500_n0500_r1",
+  "duration_sec": 300,
+  "stats_interval_sec": 2,
+  "k8s_dir": "/home/jose/campana_hil_b7/k8s",
+  "namespace": "simulateiot",
+  "actuador": "yun",
+  "nodos": "500",
+  "cep_cpu": "100m",
+  "cep_w_ms": "5000 (por defecto)",
+  "cep_h_ms": "50 (por defecto)",
+  "cep_max": "500",
+  "started_at": "2026-10-30T13:19:59.149463",
+  "finished_at": "2026-10-30T13:27:28.173145"
+}

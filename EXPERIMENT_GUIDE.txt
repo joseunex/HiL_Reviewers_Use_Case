@@ -9,33 +9,27 @@ The MQTT topic names used in the model were defined before the paper was
 written and do not match the naming conventions described in the manuscript.
 Please consider the following mapping:
 
-  Topic   Paper description
-  -----   -----------------------------------------------------------------
-  Z       Temperature readings from the closed-loop batch reactor sensor
-  C       Temperature readings from background sensors
-  B       Cooling command for the actuator (issued by the CEP)
-  D       Cooling command related to temperature data from background sensors (issued by the CEP)
+  Topic           Paper description
+  -----           -----------------------------------------------------------
+  Z               Temperature readings from the closed-loop batch reactor sensor
+  C               Temperature readings from background sensors
+  B               Cooling command for the actuator (issued by the CEP)
+  D               Cooling command related to temperature data from background sensors (issued by the CEP)
+  actuators/ack   Acknowledgment of the actuator (closes the timing loop)
 
 All commands run from:  DeployV2/k8s/
-Build scripts are in:   DeployV2/Testing/Packaging/
+Build scripts are in:   Testing/Packaging/
 
-These experiments are made to run WITHOUT physical HiL devices. 
-All components, including the actuator and the closed-loop
-thermal sensor, execute as containers within the Kubernetes cluster. 
-Nevertheless, the results are representative of the framework's timing 
-and scalability behavior.
+By default the experiments run WITHOUT physical HiL devices: all components,
+including the actuator and the closed-loop thermal sensor, execute as
+containers within the Kubernetes cluster. The variant with physical devices
+(thermal sensor on a Raspberry Pi, actuator on an Arduino Yun), which is the
+one used in the paper, is described in hil_bench/README.md and only adds two
+environment variables (ACTUADOR=yun and SENSOR_NODE=raspberry) to the
+commands below.
 
-The fault-injection experiment (CEP crash, Section VIII-F-5 in the paper)
-is not covered in this guide. It can be reproduced manually by deleting
-the CEP pod during a running experiment:
-  # Scale CEP to 0 replicas (simulate crash)
-	kubectl -n simulateiot scale deploy fogfoga0-cep-esper --replicas=0
-	
-	# Wait ~60s (outage duration)
-	sleep 60
-	
-	# Restore CEP
-	kubectl -n simulateiot scale deploy fogfoga0-cep-esper --replicas=1
+The data of every run reported in the paper and the scripts that regenerate
+its tables and figures are in data/ and analysis/ (see data/README.md).
 
 ================================================================================
   PREREQUISITES
@@ -44,7 +38,7 @@ the CEP pod during a running experiment:
 Software:
   - Kubernetes cluster running (tested with K3s v1.34.3+k3s1)
   - Docker installed on the host
-  - Maven (mvn) installed (for compiling Java components)
+  - Maven (mvn) and a JDK (tested with OpenJDK 11 and 17) for compiling the Java components
   - metrics-server installed (kubectl top pods must work)
   - Python 3 with: pip install pandas matplotlib numpy
 
@@ -99,8 +93,8 @@ The registry IP is auto-detected from the host's network interface.
   STEP 1: COMPILE, BUILD, AND PUSH
 ================================================================================
 
-These three scripts are in DeployV2/Testing/Packaging/ and must be run
-sequentially before the first experiment at each node-count configuration.
+These three scripts are in Testing/Packaging/ and must be run sequentially
+before the first experiment (and after any change in the sources).
 
   1.1  Compile Java packages (Maven):
 
@@ -122,26 +116,39 @@ sequentially before the first experiment at each node-count configuration.
 NOTE: The phase2 and phase3 scripts auto-detect the host IP for the
 registry address. Ensure it matches the IP used in step 0.
 
+The sources of the CEP (EsperComponentfoga0) and of the Fog node (foga0)
+include the corrections made during the revision of the paper: the CEP no
+longer sleeps 100 ms after every publication, it releases the events in
+global order of their source timestamp, and it prints one ESPER_STATS line
+per second with its ingress statistics (received, released and published
+events, time in the reorder buffer, late and overflow drops).
+
 ================================================================================
-  STEP 2: CONFIGURE THE NODE COUNT
+  STEP 2: CONFIGURE THE EXPERIMENT (ENVIRONMENT VARIABLES)
 ================================================================================
 
-The number of background sensor nodes is controlled by the SENSOR_QUANTITY
-environment variable in the sensthread1 manifest:
+apply-all.sh reads the following variables; run_experiment.py records them
+in config.json. None of them requires a rebuild.
 
-    DeployV2/k8s/fogfoga0-sensor-sensthread1.manifest.yaml
+  NODOS        Total number of sensor nodes (background sensors + the
+               closed-loop sensor). SENSOR_QUANTITY of the sensthread1
+               manifest is set to NODOS - 1. Paper: 5, 100, 250, 500, 1000
+               and 1500. Without NODOS the manifest value is used.
+  CEP_CPU      CPU limit of the CEP container (requests = limits), e.g. 100m
+               = 0.1 core, the value used in the paper to emulate a CEP on a
+               resource-constrained device. Without CEP_CPU there is no limit.
+  CEP_W_MS     Lateness window W in ms (default 5000).
+  CEP_H_MS     Reorder hold H in ms (default 50).
+  CEP_MAX      Capacity of the reorder buffer per topic, in events (default 2000).
+  ACTUADOR     contenedor (default): the actuator runs as the acta0 container.
+               yun: the actuator is a physical Arduino Yun (acta0 is not deployed).
+  SENSOR_NODE  host (default): the closed-loop sensor runs on the host node.
+               raspberry: it runs on the Raspberry Pi (node "raspberrypi").
 
-To change the number of total sensor nodes in the experiment, edit the
-SENSOR_QUANTITY value in that manifest. The ClosedLoopSensor (the primary
-reactor loop sensor) is a separate deployment and always runs as 1 replica.
-
-    Experiment    SENSOR_QUANTITY    Total sensors (incl. ClosedLoopSensor)
-    ----------    ---------------   --------------------------------------
-    5 nodes       4                  5  (4 background + 1 closed-loop)
-    50 nodes      49                 50 (49 background + 1 closed-loop)
-    100 nodes     99                 100 (99 background + 1 closed-loop)
-
-After editing the manifest, no rebuild is needed.
+apply-all.sh deploys Mosquitto, MongoDB, the Fog node and the CEP, waits
+until the CEP prints CEP_STATS_MS= in its log (Esper initialised; with a
+CPU limit this can take minutes), and only then deploys the sensors and the
+actuator, so that the start of the JVM does not overlap with the load.
 
 ================================================================================
   STEP 3: RUN EXPERIMENTS
@@ -149,67 +156,86 @@ After editing the manifest, no rebuild is needed.
 
 From DeployV2/k8s/:
 
-  python3 run_experiment.py --name <experiment_name> --duration 300
+  CEP_CPU=100m NODOS=100 python3 run_experiment.py --name esc_n0100_r1 --duration 600
 
 What it does (automatically):
   1. Deploys all components (apply-all.sh)
-  2. Collects kubectl top pods every 2s -> kubectl_top.csv
-  3. Waits for the configured duration
-  4. Exports MongoDB collections to JSON
-  5. Collects pod logs
-  6. Resets everything (reset-all.sh)
+  2. Collects kubectl top pods every 2s -> raw/kubectl_top.csv
+  3. Streams the ESPER_STATS lines of the CEP -> raw/cep_stats_stream.log
+  4. Waits for the configured duration
+  5. Exports MongoDB collections to JSON (raw/mongo/)
+  6. Collects pod logs (raw/logs/) and the node and image of each pod (raw/pods_imagenes.txt)
+  7. Resets everything (reset-all.sh)
 
-Output goes to:  experiments/<experiment_name>/raw/
+Output goes to:  experiments/<experiment_name>/  (config.json, raw/)
+
+Fault injection (Section 7.4.4 of the paper):
+
+  CEP_CPU=100m NODOS=5 python3 run_experiment.py --name fallo_n0005_r1 --duration 420 --crash-at 150 --crash-duration 60
+
+  At second 150 of the measurement the CEP Deployment is scaled to 0
+  replicas and 60 s later back to 1. The instants of the outage, of the
+  restoration and of the moment the CEP is ready again are recorded in
+  config.json, and the log of the pod that was scaled down in
+  raw/cep_log_before_the_outage.log.
+
+Sensitivity to the synchronization settings (Section 7.4.5):
+
+  CEP_CPU=100m NODOS=100 CEP_H_MS=0    python3 run_experiment.py --name h0_n0100_r1 --duration 300
+  CEP_CPU=100m NODOS=100 CEP_H_MS=200  python3 run_experiment.py --name h200_n0100_r1 --duration 300
+  CEP_CPU=100m NODOS=500 CEP_W_MS=2000 python3 run_experiment.py --name w2000_n0500_r1 --duration 300
+  CEP_CPU=100m NODOS=500 CEP_MAX=500   python3 run_experiment.py --name max500_n0500_r1 --duration 300
+
+Campaigns (several scenarios, several rounds in random order, resumable):
+hil_bench/campaign/run_campaign.sh, see hil_bench/README.md. It also works
+without physical devices with ACTUADOR=contenedor SENSOR_NODE=host.
 
 ================================================================================
-  STEP 4: ANALYZE EACH EXPERIMENT
+  STEP 4: ANALYZE
 ================================================================================
 
-  python3 analyze_experiment.py --exp-dir experiments/<experiment_name>
+A single run:
 
-Optional: change warmup period (default 30s):
+  python3 analyze_experiment.py --exp-dir experiments/<experiment_name> --warmup 420
 
-  python3 analyze_experiment.py --exp-dir experiments/<experiment_name> --warmup 30
+  --warmup discards the first seconds after the first reading (the paper
+  analyses the last 180 s of its 600 s runs). It generates in
+  experiments/<name>/results/: latency_summary.csv/.tex,
+  fidelity_summary.csv/.tex, cep_drops_summary.json, cep_stats.csv,
+  cep_stats_summary.csv and the figures fig_latency_boxplot,
+  fig_rtt_cdf, fig_jitter_histogram, fig_rtt_timeline,
+  fig_temperature_trajectory, fig_overshoot_vs_latency, fig_cep_drops,
+  fig_cep_stats and fig_resources (png and pdf).
 
-What it generates in experiments/<name>/results/:
-  - fig_latency_boxplot.png/pdf
-  - fig_rtt_cdf.png/pdf
-  - fig_jitter_histogram.png/pdf
-  - fig_rtt_timeline.png/pdf
-  - fig_temperature_trajectory.png/pdf
-  - fig_overshoot_vs_latency.png/pdf
-  - fig_cep_drops.png/pdf
-  - fig_resources.png/pdf
-  - latency_summary.csv + .tex
-  - fidelity_summary.csv + .tex
-  - cep_drops_summary.json
+A campaign (one row per run, aggregates per scale and the tables and
+figures of the paper): scripts of analysis/, documented in data/README.md.
+For example, with the data of the paper:
+
+  python3 analysis/aggregate_campaign.py data/scalability --last 180
+  python3 analysis/paper_figures.py --out figures --tablas figures/tables.tex
 
 ================================================================================
-  FULL SEQUENCE (copy-paste)
+  FULL SEQUENCE (copy-paste, without physical devices)
 ================================================================================
 
 # --- One-time setup ---
 kubectl label node <YOUR_NODE_NAME> simulateiot.io/role=host
 cd DeployV2/k8s/
 sed -i 's|192.168.0.17:5000|<YOUR_HOST_IP>:5000|g' *.yaml
+python3 ../../Testing/Packaging/phase1-compile-packages.py
+python3 ../../Testing/Packaging/phase2-docker-build.py
+python3 ../../Testing/Packaging/phase3-docker-push.py
 
-# --- Experiment 1: 5 nodes ---
-# Edit sensthread1 manifest: set SENSOR_QUANTITY to "4"
-python3 ../Testing/Packaging/phase1-compile-packages.py
-python3 ../Testing/Packaging/phase2-docker-build.py
-python3 ../Testing/Packaging/phase3-docker-push.py
-python3 run_experiment.py --name exp1_5nodes --duration 300
-python3 analyze_experiment.py --exp-dir experiments/exp1_5nodes
+# --- Scalability, one run per scale (repeat 5 times for the ranges of the paper) ---
+for n in 5 100 250 500 1000 1500; do
+  CEP_CPU=100m NODOS=$n python3 run_experiment.py --name esc_n$(printf %04d $n)_r1 --duration 600
+done
 
-# --- Experiment 2: 50 nodes ---
-# Edit sensthread1 manifest: set SENSOR_QUANTITY to "49"
-python3 run_experiment.py --name exp2_50nodes --duration 300
-python3 analyze_experiment.py --exp-dir experiments/exp2_50nodes
+# --- Fault injection ---
+CEP_CPU=100m NODOS=5 python3 run_experiment.py --name fallo_n0005_r1 --duration 420 --crash-at 150 --crash-duration 60
 
-# --- Experiment 3: 100 nodes ---
-# Edit sensthread1 manifest: set SENSOR_QUANTITY to "99"
-python3 run_experiment.py --name exp3_100nodes --duration 300
-python3 analyze_experiment.py --exp-dir experiments/exp3_100nodes
+# --- Analysis of one run ---
+python3 analyze_experiment.py --exp-dir experiments/esc_n0100_r1 --warmup 420
 
 ================================================================================
   TROUBLESHOOTING
@@ -225,6 +251,10 @@ python3 analyze_experiment.py --exp-dir experiments/exp3_100nodes
 0 ACK records after analysis:
   Try --warmup 0 to check if warmup is discarding all data
 
+"the CEP did not start within 600 s" (apply-all.sh):
+  With CEP_CPU the JVM start is slow; check the CEP log with
+  kubectl -n simulateiot logs deploy/fogfoga0-cep-esper
+
 Docker push fails with "http: server gave HTTP response to HTTPS client":
   The registry is not configured as insecure. Revisit Step 0.2 and 0.3.
 
@@ -233,5 +263,9 @@ Pods stuck in ImagePullBackOff:
 
 Pods stuck in Pending (no nodes available):
   The node label is missing. Apply it: kubectl label node <name> simulateiot.io/role=host
+
+Pods evicted (DiskPressure):
+  Kubernetes evicts pods when the disk of the node is nearly full. A 600 s
+  run at 1500 nodes produces about 1 GB of logs and exports.
 
 ================================================================================

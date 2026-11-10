@@ -1,0 +1,15 @@
+{
+  "experiment_name": "h200_n0100_r1",
+  "duration_sec": 300,
+  "stats_interval_sec": 2,
+  "k8s_dir": "/home/jose/campana_hil_b7/k8s",
+  "namespace": "simulateiot",
+  "actuador": "yun",
+  "nodos": "100",
+  "cep_cpu": "100m",
+  "cep_w_ms": "5000 (por defecto)",
+  "cep_h_ms": "200",
+  "cep_max": "2000 (por defecto)",
+  "started_at": "2026-10-30T13:27:51.826899",
+  "finished_at": "2026-10-30T13:34:45.901983"
+}

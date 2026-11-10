@@ -745,6 +745,99 @@ def export_latex_table(df_table, filepath, caption="", label=""):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
+# ============================================================
+# B2: CEP runtime statistics (ESPER_STATS lines of the CEP log)
+# ============================================================
+CEP_STATS_COLS = ["rx", "rel", "pub", "pub_err", "pub_ms_mean", "pub_ms_max",
+                  "util", "buf_ms_mean", "buf_ms_max", "occ"]
+
+
+def load_cep_stats(exp_raw_dir, warmup_sec=0):
+    """Parse the ESPER_STATS lines (one per CEP_STATS_MS, 1 s by default) of the CEP log.
+    The origin of t_rel is the first line with received events, and the warmup is discarded from it."""
+    # Under heavy load the container log rotates and kubectl logs only keeps the last part, so run_experiment.py
+    # also copies the ESPER_STATS lines to raw/cep_stats_stream.log; the most complete file is used.
+    logs = sorted(glob.glob(os.path.join(exp_raw_dir, "logs", "*cep-esper*.log")))
+    stream = os.path.join(exp_raw_dir, "cep_stats_stream.log")
+    candidates = ([stream] if os.path.isfile(stream) else []) + logs
+    if not candidates:
+        print("  No CEP log found (raw/logs/*cep-esper*.log)")
+        return pd.DataFrame()
+    rows, src = [], None
+    for path in candidates:
+        cur = []
+        with open(path, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                if not line.startswith("ESPER_STATS"):
+                    continue
+                rec = {}
+                for part in line.strip().split("|")[1:]:
+                    if "=" in part:
+                        k, v = part.strip().split("=", 1)
+                        try:
+                            rec[k] = float(v)
+                        except ValueError:
+                            pass
+                cur.append(rec)
+        if len(cur) > len(rows):
+            rows, src = cur, path
+    if not rows:
+        print("  No ESPER_STATS lines in the CEP log (CEP image without the B2 changes?)")
+        return pd.DataFrame()
+    df = pd.DataFrame(rows).fillna(0)
+    if "t" in df.columns:
+        df = df.drop_duplicates(subset="t", keep="first").sort_values("t").reset_index(drop=True)
+    logs = [src]
+    active = df[df["rx"] > 0]
+    if active.empty:
+        return pd.DataFrame()
+    t0 = active["t"].iloc[0]
+    df["t_rel"] = (df["t"] - t0) / 1000.0
+    df = df[df["t_rel"] >= warmup_sec].copy()
+    df["t_rel"] = df["t_rel"] - warmup_sec
+    df["util_pct"] = df["util"] * 100.0
+    print(f"Loading CEP stats from: {logs[0]}")
+    print(f"  ESPER_STATS lines: {len(rows)}  |  After warmup ({warmup_sec:.0f}s): {len(df)}")
+    return df
+
+
+def summarize_cep_stats(df):
+    out = []
+    for c in CEP_STATS_COLS:
+        if c not in df.columns:
+            continue
+        v = df[c]
+        out.append({"Metric": c, "Median": round(v.median(), 3), "Mean": round(v.mean(), 3),
+                    "P95": round(v.quantile(0.95), 3), "Max": round(v.max(), 3)})
+    return pd.DataFrame(out)
+
+
+def fig_cep_stats(df, results_dir):
+    """Rates, utilisation of the release thread and residence time in the reorder buffer over time."""
+    if df.empty:
+        print("  Skipping cep_stats plot (no ESPER_STATS lines)")
+        return
+    fig, axes = plt.subplots(3, 1, figsize=(7, 6.5), sharex=True)
+    ax = axes[0]
+    ax.plot(df["t_rel"], df["rx"], label="received")
+    ax.plot(df["t_rel"], df["rel"], label="released to Esper")
+    ax.plot(df["t_rel"], df["pub"], label="published")
+    ax.set_ylabel("events/s")
+    ax.legend(fontsize=8, loc="upper right")
+    ax = axes[1]
+    ax.plot(df["t_rel"], df["util_pct"], color="tab:red")
+    ax.set_ylabel("release thread\nbusy (%)")
+    ax = axes[2]
+    ax.plot(df["t_rel"], df["buf_ms_mean"], label="mean")
+    ax.plot(df["t_rel"], df["buf_ms_max"], label="max", alpha=0.7)
+    ax.set_ylabel("time in reorder\nbuffer (ms)")
+    ax.set_xlabel("Time (s, after warmup)")
+    ax.legend(fontsize=8, loc="upper right")
+    fig.tight_layout()
+    save_fig(fig, results_dir, "fig_cep_stats")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Analyze experiment data and generate figures")
     parser.add_argument("--exp-dir", required=True, help="Experiment directory (e.g., experiments/exp1_5nodes)")
@@ -810,6 +903,14 @@ def main():
     with open(os.path.join(results_dir, "cep_drops_summary.json"), "w") as f:
         json.dump(drops_final, f, indent=2)
 
+    print("\n--- CEP Runtime Stats (ESPER_STATS) ---")
+    df_cep = load_cep_stats(os.path.join(exp_dir, "raw"), warmup_sec=args.warmup)
+    if not df_cep.empty:
+        cep_summary = summarize_cep_stats(df_cep)
+        print(cep_summary.to_string(index=False))
+        cep_summary.to_csv(os.path.join(results_dir, "cep_stats_summary.csv"), index=False)
+        df_cep.to_csv(os.path.join(results_dir, "cep_stats.csv"), index=False)
+
     # ----- Figures -----
     print("\n--- Generating figures ---")
     figure_funcs = [
@@ -821,6 +922,7 @@ def main():
         ("fig_overshoot_vs_latency",  lambda: fig_overshoot_vs_latency(df_acks, results_dir)),
         ("fig_cep_drops",             lambda: fig_cep_drops(df_acks, results_dir)),
         ("fig_resources",             lambda: fig_resources(df_stats, results_dir)),
+        ("fig_cep_stats",             lambda: fig_cep_stats(df_cep, results_dir)),
     ]
     for name, func in figure_funcs:
         try:

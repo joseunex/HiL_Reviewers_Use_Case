@@ -1,0 +1,12 @@
+{
+  "experiment_name": "esc_n0500_r5",
+  "duration_sec": 300,
+  "stats_interval_sec": 2,
+  "k8s_dir": "/home/jose/campana_hil/k8s",
+  "namespace": "simulateiot",
+  "actuador": "yun",
+  "nodos": "500",
+  "cep_cpu": "100m",
+  "started_at": "2026-10-28T22:54:33.765178",
+  "finished_at": "2026-10-28T23:01:56.699199"
+}

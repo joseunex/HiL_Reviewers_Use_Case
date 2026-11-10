@@ -1,0 +1,17 @@
+{
+  "experiment_name": "fallo_n0005_r5",
+  "duration_sec": 420,
+  "stats_interval_sec": 2,
+  "k8s_dir": "/home/jose/campana_hil/k8s",
+  "namespace": "simulateiot",
+  "actuador": "yun",
+  "nodos": "5",
+  "cep_cpu": "100m",
+  "started_at": "2026-10-28T23:17:04.167793",
+  "crash_at_sec": 150,
+  "crash_duration_sec": 60,
+  "crash_start_ms": 1793226089147,
+  "crash_end_ms": 1793226149291,
+  "cep_ready_after_restart_ms": 1793226207189,
+  "finished_at": "2026-10-28T23:26:02.630266"
+}

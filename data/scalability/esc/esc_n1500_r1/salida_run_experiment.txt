@@ -1,0 +1,141 @@
+[2026-11-03 19:16:11] ========== EXPERIMENT: esc_n1500_r1 ==========
+[2026-11-03 19:16:11] Output directory: /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1
+[2026-11-03 19:16:11] Duration: 600s
+[2026-11-03 19:16:11] K8s manifests dir: /home/jose/campana_hil_largas/k8s
+[2026-11-03 19:16:11] Config saved to /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/config.json
+[2026-11-03 19:16:11] Deploying (apply-all.sh) ...
+[2026-11-03 19:16:11] $ bash apply-all.sh
+==> Namespace: simulateiot
+==> Applying Mosquitto (per fog) and waiting rollouts
+configmap/fogfoga0-mosquitto-config created
+deployment.apps/fogfoga0-mosquitto created
+service/mosquitto-foga0 created
+service/mosquitto-foga0-nodeport created
+Waiting for deployment "fogfoga0-mosquitto" rollout to finish: 0 of 1 updated replicas are available...
+deployment "fogfoga0-mosquitto" successfully rolled out
+==> Applying MongoDB (per fog, internal only) and waiting rollouts
+service/fogfoga0-mongo created
+deployment.apps/fogfoga0-mongo created
+Waiting for deployment "fogfoga0-mongo" rollout to finish: 0 of 1 updated replicas are available...
+deployment "fogfoga0-mongo" successfully rolled out
+==> Applying Fog services and waiting rollouts
+deployment.apps/fogfoga0-fog created
+Waiting for deployment "fogfoga0-fog" rollout to finish: 0 of 1 updated replicas are available...
+deployment "fogfoga0-fog" successfully rolled out
+==> Applying Esper (CEP) with CPU=100m W=5000 H=50 MAX=2000 and waiting rollouts
+deployment.apps/fogfoga0-cep-esper created
+Waiting for deployment "fogfoga0-cep-esper" rollout to finish: 0 of 1 updated replicas are available...
+deployment "fogfoga0-cep-esper" successfully rolled out
+==> Esperando a que el CEP esté listo...
+    CEP listo en 84 s
+==> Applying Sensors (NODOS=1500: SENSOR_QUANTITY=1499) and waiting rollouts
+deployment.apps/fogfoga0-sensor-sensthread1 created
+Waiting for deployment "fogfoga0-sensor-sensthread1" rollout to finish: 0 of 1 updated replicas are available...
+deployment "fogfoga0-sensor-sensthread1" successfully rolled out
+==> Applying ClosedLoopSensor (reactor batch thermal model)
+deployment.apps/closedloopsensor created
+Waiting for deployment "closedloopsensor" rollout to finish: 0 of 1 updated replicas are available...
+deployment "closedloopsensor" successfully rolled out
+==> Actuator: Arduino Yún físico (no se despliega acta0)
+==> Done.
+NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/closedloopsensor              1/1     1            1           33s
+deployment.apps/fogfoga0-cep-esper            1/1     1            1           2m
+deployment.apps/fogfoga0-fog                  1/1     1            1           2m1s
+deployment.apps/fogfoga0-mongo                1/1     1            1           2m2s
+deployment.apps/fogfoga0-mosquitto            1/1     1            1           2m3s
+deployment.apps/fogfoga0-sensor-sensthread1   1/1     1            1           34s
+
+NAME                                               READY   STATUS    RESTARTS   AGE
+pod/closedloopsensor-d49cd77f7-dldqb               1/1     Running   0          33s
+pod/fogfoga0-cep-esper-65b6b7646f-4wk7c            1/1     Running   0          2m
+pod/fogfoga0-fog-749f4f9989-5q46j                  1/1     Running   0          2m1s
+pod/fogfoga0-mongo-56784d8f5c-pj75x                1/1     Running   0          2m2s
+pod/fogfoga0-mosquitto-84b4795f76-rh25l            1/1     Running   0          2m3s
+pod/fogfoga0-sensor-sensthread1-766788b595-xk2s6   1/1     Running   0          34s
+
+NAME                               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+service/fogfoga0-mongo             ClusterIP   10.43.156.80   <none>        27017/TCP        2m2s
+service/mosquitto-foga0            ClusterIP   10.43.198.75   <none>        1883/TCP         2m3s
+service/mosquitto-foga0-nodeport   NodePort    10.43.78.211   <none>        1883:30100/TCP   2m3s
+[2026-11-03 19:18:14] Deployment completed in 124.0s
+[2026-11-03 19:18:15] Resource stats collection started -> /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/kubectl_top.csv
+[2026-11-03 19:18:15] Experiment running for 600s ...
+[2026-11-03 19:18:15]   (Press Ctrl+C to stop early)
+[2026-11-03 19:18:16]   600s remaining ...
+[2026-11-03 19:19:16]   540s remaining ...
+[2026-11-03 19:20:16]   480s remaining ...
+[2026-11-03 19:21:16]   420s remaining ...
+[2026-11-03 19:22:16]   360s remaining ...
+[2026-11-03 19:23:16]   300s remaining ...
+[2026-11-03 19:24:16]   240s remaining ...
+[2026-11-03 19:25:16]   180s remaining ...
+[2026-11-03 19:26:16]   120s remaining ...
+[2026-11-03 19:27:16]   60s remaining ...
+[2026-11-03 19:28:15] Resource stats collection stopped
+[2026-11-03 19:28:15] Exporting MongoDB ...
+[2026-11-03 19:28:15] $ kubectl get pods -n simulateiot -l app -o jsonpath='{.items[*].metadata.name}'
+[2026-11-03 19:28:15] Found MongoDB pod: fogfoga0-mongo-56784d8f5c-pj75x
+[2026-11-03 19:28:15] $ kubectl exec -n simulateiot fogfoga0-mongo-56784d8f5c-pj75x -- mongosh --quiet --eval 'JSON.stringify(db.adminCommand({listDatabases:1}).databases.map(d=>d.name))'
+[2026-11-03 19:28:16] Found Fog databases: ['Fog_Node_fogfoga0-fog']
+[2026-11-03 19:28:16] $ kubectl exec -n simulateiot fogfoga0-mongo-56784d8f5c-pj75x -- mongosh --quiet --eval 'JSON.stringify(db.getSiblingDB("Fog_Node_fogfoga0-fog").getCollectionNames())'
+[2026-11-03 19:28:16] Exporting Fog_Node_fogfoga0-fog.C ...
+[2026-11-03 19:28:16] $ kubectl exec -n simulateiot fogfoga0-mongo-56784d8f5c-pj75x -- mongosh --quiet --eval 'db.getSiblingDB("Fog_Node_fogfoga0-fog").getCollection("C").find().forEach(function(d){print(JSON.stringify(d))})' > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__C.json
+[2026-11-03 19:28:37]   -> /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__C.json (200262574 bytes)
+[2026-11-03 19:28:37] Exporting Fog_Node_fogfoga0-fog.B ...
+[2026-11-03 19:28:37] $ kubectl exec -n simulateiot fogfoga0-mongo-56784d8f5c-pj75x -- mongosh --quiet --eval 'db.getSiblingDB("Fog_Node_fogfoga0-fog").getCollection("B").find().forEach(function(d){print(JSON.stringify(d))})' > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__B.json
+[2026-11-03 19:28:37]   -> /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__B.json (35307 bytes)
+[2026-11-03 19:28:37] Exporting Fog_Node_fogfoga0-fog.actuators_ack ...
+[2026-11-03 19:28:37] $ kubectl exec -n simulateiot fogfoga0-mongo-56784d8f5c-pj75x -- mongosh --quiet --eval 'db.getSiblingDB("Fog_Node_fogfoga0-fog").getCollection("actuators_ack").find().forEach(function(d){print(JSON.stringify(d))})' > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__actuators_ack.json
+[2026-11-03 19:28:38]   -> /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__actuators_ack.json (71380 bytes)
+[2026-11-03 19:28:38] Exporting Fog_Node_fogfoga0-fog.Z ...
+[2026-11-03 19:28:38] $ kubectl exec -n simulateiot fogfoga0-mongo-56784d8f5c-pj75x -- mongosh --quiet --eval 'db.getSiblingDB("Fog_Node_fogfoga0-fog").getCollection("Z").find().forEach(function(d){print(JSON.stringify(d))})' > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__Z.json
+[2026-11-03 19:28:38]   -> /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/mongo/Fog_Node_fogfoga0-fog__Z.json (139204 bytes)
+[2026-11-03 19:28:38] Collecting pod logs ...
+[2026-11-03 19:28:38] $ kubectl get pods -n simulateiot -o jsonpath='{.items[*].metadata.name}'
+[2026-11-03 19:28:38] Collecting logs from closedloopsensor-d49cd77f7-dldqb ...
+[2026-11-03 19:28:38] $ kubectl logs -n simulateiot closedloopsensor-d49cd77f7-dldqb --tail=-1 > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/logs/closedloopsensor-d49cd77f7-dldqb.log 2>&1
+[2026-11-03 19:28:39] Collecting logs from fogfoga0-cep-esper-65b6b7646f-4wk7c ...
+[2026-11-03 19:28:39] $ kubectl logs -n simulateiot fogfoga0-cep-esper-65b6b7646f-4wk7c --tail=-1 > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/logs/fogfoga0-cep-esper-65b6b7646f-4wk7c.log 2>&1
+[2026-11-03 19:28:50] Collecting logs from fogfoga0-fog-749f4f9989-5q46j ...
+[2026-11-03 19:28:50] $ kubectl logs -n simulateiot fogfoga0-fog-749f4f9989-5q46j --tail=-1 > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/logs/fogfoga0-fog-749f4f9989-5q46j.log 2>&1
+[2026-11-03 19:29:09] Collecting logs from fogfoga0-mongo-56784d8f5c-pj75x ...
+[2026-11-03 19:29:09] $ kubectl logs -n simulateiot fogfoga0-mongo-56784d8f5c-pj75x --tail=-1 > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/logs/fogfoga0-mongo-56784d8f5c-pj75x.log 2>&1
+[2026-11-03 19:29:10] Collecting logs from fogfoga0-mosquitto-84b4795f76-rh25l ...
+[2026-11-03 19:29:10] $ kubectl logs -n simulateiot fogfoga0-mosquitto-84b4795f76-rh25l --tail=-1 > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/logs/fogfoga0-mosquitto-84b4795f76-rh25l.log 2>&1
+[2026-11-03 19:29:38] Collecting logs from fogfoga0-sensor-sensthread1-766788b595-xk2s6 ...
+[2026-11-03 19:29:38] $ kubectl logs -n simulateiot fogfoga0-sensor-sensthread1-766788b595-xk2s6 --tail=-1 > /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1/raw/logs/fogfoga0-sensor-sensthread1-766788b595-xk2s6.log 2>&1
+[2026-11-03 19:29:58] Resetting (reset-all.sh) ...
+[2026-11-03 19:29:58] $ bash reset-all.sh
+==> Resetting Kubernetes resources in namespace: simulateiot
+==> Deleting Deployments (closedloopsensor, actuators, CEP, sensors, fog, mongo, mosquitto) - ignoring if missing
+deployment.apps "closedloopsensor" deleted from simulateiot namespace
+deployment.apps "fogfoga0-cep-esper" deleted from simulateiot namespace
+deployment.apps "fogfoga0-sensor-sensthread1" deleted from simulateiot namespace
+deployment.apps "fogfoga0-fog" deleted from simulateiot namespace
+deployment.apps "fogfoga0-mosquitto" deleted from simulateiot namespace
+==> Deleting Services (mongo internal + mosquitto DNS + nodeports)
+deployment.apps "fogfoga0-mongo" deleted from simulateiot namespace
+service "fogfoga0-mongo" deleted from simulateiot namespace
+service "mosquitto-foga0" deleted from simulateiot namespace
+service "mosquitto-foga0-nodeport" deleted from simulateiot namespace
+==> Deleting Mosquitto ConfigMaps
+configmap "fogfoga0-mosquitto-config" deleted from simulateiot namespace
+==> Reset done. Current state:
+NAME                                               READY   STATUS        RESTARTS   AGE
+pod/closedloopsensor-d49cd77f7-dldqb               1/1     Terminating   0          12m
+pod/fogfoga0-cep-esper-65b6b7646f-4wk7c            0/1     Error         0          13m
+pod/fogfoga0-fog-749f4f9989-5q46j                  0/1     Error         0          13m
+pod/fogfoga0-mongo-56784d8f5c-pj75x                0/1     Completed     0          13m
+pod/fogfoga0-mosquitto-84b4795f76-rh25l            0/1     Completed     0          13m
+pod/fogfoga0-sensor-sensthread1-766788b595-xk2s6   0/1     Error         0          12m
+
+NAME                         DATA   AGE
+configmap/kube-root-ca.crt   1      299d
+[2026-11-03 19:30:00] ========== EXPERIMENT esc_n1500_r1 COMPLETE ==========
+[2026-11-03 19:30:00] Results in: /home/jose/campana_hil_largas/datos/esc/esc_n1500_r1
+[2026-11-03 19:30:00]   raw/kubectl_top.csv     - resource consumption over time (kubectl top pods)
+[2026-11-03 19:30:00]   raw/mongo/              - MongoDB exports (JSON)
+[2026-11-03 19:30:00]   raw/logs/              - pod logs
+[2026-11-03 19:30:00]   raw/deploy_time.txt    - deployment timing
+[2026-11-03 19:30:00]   config.json            - experiment parameters

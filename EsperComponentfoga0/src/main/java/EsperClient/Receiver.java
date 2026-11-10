@@ -3,8 +3,10 @@ package EsperClient;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,9 +28,11 @@ public class Receiver implements MqttCallback {
   private final long HOLD_MS;         // holding period for reordering
   private final int  MAX_EVENTS;      // bounded buffer size per topic
   private final long FLUSH_MS;        // flush period
+  private final long STATS_MS;        // B2: period of the ESPER_STATS lines (0 = disabled)
 
   private final Map<String, ReorderBuffer> buffers = new ConcurrentHashMap<>();
   private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+  private final ScheduledExecutorService statsScheduler = Executors.newSingleThreadScheduledExecutor(); // B2
 
   // --- drop counters (thread-safe, accessible from MyListener) ---
   private static final AtomicLong droppedMissingTg   = new AtomicLong(0);
@@ -45,6 +49,14 @@ public class Receiver implements MqttCallback {
   /** Dropped because reorder buffer overflow. */
   public static long getDroppedOverflow() { return droppedOverflow.get(); }
 
+  // B2: runtime statistics of the CEP ingress, reset at every ESPER_STATS line
+  private final AtomicLong rxCount  = new AtomicLong(0);  // messages received
+  private final AtomicLong relCount = new AtomicLong(0);  // events released to Esper
+  private final AtomicLong procNs   = new AtomicLong(0);  // time spent processing released events (Esper + listeners + publications)
+  private final AtomicLong bufMsSum = new AtomicLong(0);  // residence time in the reorder buffer, sum
+  private final AtomicLong bufMsMax = new AtomicLong(0);  // residence time in the reorder buffer, max
+  private long lastStatsNs = System.nanoTime();
+
   public Receiver(GestorDeConexiones gestorconexiones, Publisher pub, EsperComponent esp) {
     this.gestorconexiones = gestorconexiones;
     this.pub = pub;
@@ -54,11 +66,13 @@ public class Receiver implements MqttCallback {
     this.HOLD_MS   = getLongEnv("CEP_REORDER_HOLD_MS", 50L);
     this.MAX_EVENTS= (int) getLongEnv("CEP_REORDER_MAX_EVENTS", 2000L);
     this.FLUSH_MS  = getLongEnv("CEP_REORDER_FLUSH_MS", 10L);
+    this.STATS_MS  = getLongEnv("CEP_STATS_MS", 1000L); // B2
 
     System.out.println("CEP_LATENESS_W_MS=" + W_MS);
     System.out.println("CEP_REORDER_HOLD_MS=" + HOLD_MS);
     System.out.println("CEP_REORDER_MAX_EVENTS=" + MAX_EVENTS);
     System.out.println("CEP_REORDER_FLUSH_MS=" + FLUSH_MS);
+    System.out.println("CEP_STATS_MS=" + STATS_MS); // B2
 
     for (int i = 0; i < this.gestorconexiones.getLclient().size(); i++) {
       this.gestorconexiones.getLclient().get(i).setCallback(this);
@@ -68,6 +82,13 @@ public class Receiver implements MqttCallback {
     scheduler.scheduleAtFixedRate(() -> {
       try { flushAll(); } catch (Throwable t) { t.printStackTrace(); }
     }, FLUSH_MS, FLUSH_MS, TimeUnit.MILLISECONDS);
+
+    // B2: periodic statistics, in their own thread so that they are reported even when the flush thread is busy
+    if (STATS_MS > 0) {
+      statsScheduler.scheduleAtFixedRate(() -> {
+        try { logStats(); } catch (Throwable t) { t.printStackTrace(); }
+      }, STATS_MS, STATS_MS, TimeUnit.MILLISECONDS);
+    }
   }
 
   private static long getLongEnv(String key, long def) {
@@ -87,6 +108,7 @@ public class Receiver implements MqttCallback {
   public void messageArrived(String topic, MqttMessage message) throws Exception {
     final long now = System.currentTimeMillis();
     final long tsrEsper = now; // reception time at CEP ingress
+    rxCount.incrementAndGet(); // B2
 
     String dataReceived = new String(message.getPayload());
     System.out.println("ESPER " + this.gestorconexiones.getIDcliente()
@@ -135,19 +157,82 @@ public class Receiver implements MqttCallback {
   }
 
   // Release to Esper based on watermark = now - HOLD_MS
+  // B2: the eligible events of all topics are released in non-decreasing tg order (k-way merge of
+  //     the per-topic buffers), and the watermark is refreshed before every release. Previously the
+  //     topics were drained one after another with the watermark fixed at the start of the pass, so a
+  //     backlog in one topic (background sensors) also delayed the release of the others (control loop).
   private void flushAll() {
-    final long now = System.currentTimeMillis();
-    final long watermark = now - HOLD_MS;
+    while (true) {
+      final long watermark = System.currentTimeMillis() - HOLD_MS;
 
-    for (ReorderBuffer buf : buffers.values()) {
-      while (true) {
-        PendingEvent pe = buf.pollEligible(watermark);
-        if (pe == null) break;
-
-        // CHANGED: include tg + seq
-        messageToEsper(pe.id, pe.tg, pe.seq, pe.value, pe.latMs, pe.tsrEsper, pe.topic);
+      ReorderBuffer next = null;
+      long nextTg = Long.MAX_VALUE;
+      for (ReorderBuffer buf : buffers.values()) {
+        long tg = buf.peekEligibleTg(watermark);
+        if (tg < nextTg) { nextTg = tg; next = buf; }
       }
+      if (next == null) break;
+
+      PendingEvent pe = next.pollEligible(watermark);
+      if (pe == null) continue; // head removed meanwhile (overflow): look again
+
+      long t0 = System.nanoTime();
+      long residenceMs = System.currentTimeMillis() - pe.tsrEsper;
+      // CHANGED: include tg + seq
+      messageToEsper(pe.id, pe.tg, pe.seq, pe.value, pe.latMs, pe.tsrEsper, pe.topic);
+      procNs.addAndGet(System.nanoTime() - t0);
+      relCount.incrementAndGet();
+      bufMsSum.addAndGet(residenceMs);
+      bufMsMax.accumulateAndGet(residenceMs, Math::max);
     }
+  }
+
+  // B2: one line per period with the processing rates, the time blocked in publications, the
+  //     utilisation of the release thread, the residence time in the reorder buffers, their
+  //     occupancy per topic and the drop counters (parsed by analyze_experiment.py)
+  private void logStats() {
+    long nowNs = System.nanoTime();
+    double periodMs = Math.max(1e-3, (nowNs - lastStatsNs) / 1e6);
+    lastStatsNs = nowNs;
+
+    long rx = rxCount.getAndSet(0);
+    long rel = relCount.getAndSet(0);
+    long proc = procNs.getAndSet(0);
+    long bufSum = bufMsSum.getAndSet(0);
+    long bufMax = bufMsMax.getAndSet(0);
+    long pubOk = Publisher.published.getAndSet(0);
+    long pubErr = Publisher.failed.getAndSet(0);
+    long blkSum = Publisher.blockedUsSum.getAndSet(0);
+    long blkMax = Publisher.blockedUsMax.getAndSet(0);
+
+    StringBuilder sb = new StringBuilder("ESPER_STATS");
+    sb.append(" | t=").append(System.currentTimeMillis());
+    sb.append(" | period_ms=").append(fmt(periodMs));
+    sb.append(" | rx=").append(rx);
+    sb.append(" | rel=").append(rel);
+    sb.append(" | pub=").append(pubOk);
+    sb.append(" | pub_err=").append(pubErr);
+    sb.append(" | pub_ms_mean=").append(fmt(pubOk + pubErr > 0 ? blkSum / 1000.0 / (pubOk + pubErr) : 0.0));
+    sb.append(" | pub_ms_max=").append(fmt(blkMax / 1000.0));
+    sb.append(" | util=").append(fmt(proc / 1e6 / periodMs));
+    sb.append(" | buf_ms_mean=").append(fmt(rel > 0 ? (double) bufSum / rel : 0.0));
+    sb.append(" | buf_ms_max=").append(bufMax);
+    long occ = 0;
+    StringBuilder perTopic = new StringBuilder();
+    for (String topic : new TreeSet<>(buffers.keySet())) {
+      int n = buffers.get(topic).size();
+      occ += n;
+      perTopic.append(" | occ_").append(topic).append('=').append(n);
+    }
+    sb.append(" | occ=").append(occ).append(perTopic);
+    sb.append(" | drop_overflow=").append(droppedOverflow.get());
+    sb.append(" | drop_late=").append(droppedLate.get());
+    sb.append(" | drop_missing_tg=").append(droppedMissingTg.get());
+    System.out.println(sb.toString());
+  }
+
+  private static String fmt(double v) {
+    return String.format(Locale.ROOT, "%.3f", v);
   }
 
   // minimal diagnostic (stdout). If you later want, you can publish to a diag topic here.
@@ -218,6 +303,14 @@ public class Receiver implements MqttCallback {
     synchronized void add(PendingEvent e) {
       pq.add(e);
     }
+
+    // B2: tg of the head if it is eligible, Long.MAX_VALUE otherwise
+    synchronized long peekEligibleTg(long watermark) {
+      PendingEvent head = pq.peek();
+      return (head != null && head.tg <= watermark) ? head.tg : Long.MAX_VALUE;
+    }
+
+    synchronized int size() { return pq.size(); } // B2
 
     // eligible if tg <= watermark
     synchronized PendingEvent pollEligible(long watermark) {

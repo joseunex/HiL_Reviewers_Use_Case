@@ -19,8 +19,9 @@ public class Publisher {
 			// publish message to broker
 			token = myTopic.publish(message);
 	    	// Wait until the message has been delivered to the broker
-//			token.waitForCompletion();
-			Thread.sleep(100);
+			// B2: bounded wait on the delivery token instead of the former fixed Thread.sleep(100)
+			//     (same change as in the CEP publisher; this path is only used for inter-Fog routing)
+			token.waitForCompletion(1000L);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

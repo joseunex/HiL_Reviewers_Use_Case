@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: closedloopsensor
+  namespace: simulateiot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: closedloopsensor
+      simulateiot.io/fog: foga0
+  template:
+    metadata:
+      labels:
+        app: closedloopsensor
+        simulateiot.io/fog: foga0
+    spec:
+      # HiL bench: the thermal sensor runs on the Raspberry Pi 3B+ (UserDevice node), not on the host
+      nodeSelector:
+        kubernetes.io/hostname: raspberrypi
+      containers:
+        - name: closedloopsensor
+          image: 192.168.0.17:5000/closedloopsensor:latest
+          imagePullPolicy: Always
+          env:
+            - name: MQTT_BROKER_URI
+              value: "tcp://mosquitto-foga0:1883"
+            - name: MQTT_TOPIC
+              value: "Z"
+            - name: MQTT_CLIENT_ID_PREFIX
+              value: "ClosedLoopSensor"
+            - name: PUBLISH_COUNT
+              value: "99999"
+            - name: PUBLISH_INTERVAL_MS
+              value: "1000.0"

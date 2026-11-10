@@ -1,9 +1,0 @@
-{
-  "experiment_name": "example_experiment",
-  "duration_sec": 300,
-  "stats_interval_sec": 2,
-  "k8s_dir": "/home/jose/UNIVERSIDAD/Desarrollo_de_Proyectos/2_Proyectos/Hardware_in_the_Loop/Reviewers_Use_Case/DeployV2/k8s",
-  "namespace": "simulateiot",
-  "started_at": "2026-03-27T12:56:10.513956",
-  "finished_at": "2026-03-27T13:01:17.439544"
-}

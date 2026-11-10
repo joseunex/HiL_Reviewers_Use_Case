@@ -1,0 +1,15 @@
+{
+  "experiment_name": "w2000_n0500_r3",
+  "duration_sec": 300,
+  "stats_interval_sec": 2,
+  "k8s_dir": "/home/jose/campana_hil_b7/k8s",
+  "namespace": "simulateiot",
+  "actuador": "yun",
+  "nodos": "500",
+  "cep_cpu": "100m",
+  "cep_w_ms": "2000",
+  "cep_h_ms": "50 (por defecto)",
+  "cep_max": "2000 (por defecto)",
+  "started_at": "2026-10-30T14:46:43.634957",
+  "finished_at": "2026-10-30T14:54:06.332947"
+}

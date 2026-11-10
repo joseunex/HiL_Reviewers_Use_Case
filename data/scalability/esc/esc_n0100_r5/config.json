@@ -1,0 +1,15 @@
+{
+  "experiment_name": "esc_n0100_r5",
+  "duration_sec": 600,
+  "stats_interval_sec": 2,
+  "k8s_dir": "/home/jose/campana_hil_largas/k8s",
+  "namespace": "simulateiot",
+  "actuador": "yun",
+  "nodos": "100",
+  "cep_cpu": "100m",
+  "cep_w_ms": "5000 (por defecto)",
+  "cep_h_ms": "50 (por defecto)",
+  "cep_max": "2000 (por defecto)",
+  "started_at": "2026-11-06T12:56:45.615645",
+  "finished_at": "2026-11-06T13:08:30.229317"
+}
